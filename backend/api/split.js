@@ -1,15 +1,15 @@
 /**
  * TokenSaver Backend — POST /api/split
  *
- * Receives a large user prompt and uses Claude to intelligently
+ * Receives a large user prompt and uses Google Gemini to intelligently
  * split it into 2–4 logical parts that can be sent sequentially.
  *
  * Environment Variables:
- *   ANTHROPIC_API_KEY — Your Anthropic API key
- *   ALLOWED_ORIGIN   — chrome-extension://YOUR_EXTENSION_ID
+ *   GEMINI_API_KEY  — Your Google Gemini API key
+ *   ALLOWED_ORIGIN  — chrome-extension://YOUR_EXTENSION_ID
  */
 
-const Anthropic = require("@anthropic-ai/sdk");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 /** System prompt for the task splitter */
 const SYSTEM_PROMPT = `You are a task splitter. The user has a large request that needs to be broken into smaller logical parts for an AI to handle one at a time. Split it into 2-4 parts where each part can stand alone but references the previous parts. Number each part clearly. Return a JSON array of strings, each string being one part of the task. Return ONLY the JSON array, no other text.`;
@@ -94,23 +94,17 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const client = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction: SYSTEM_PROMPT,
     });
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 2048,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: "user",
-          content: `Split this large task into 2-4 logical parts:\n\n${prompt}`,
-        },
-      ],
-    });
-
-    const rawResponse = message.content[0]?.text?.trim() || "";
+    const result = await model.generateContent(
+      `Split this large task into 2-4 logical parts:\n\n${prompt}`
+    );
+    const response = result.response;
+    const rawResponse = response.text().trim() || "";
     const parts = parseJsonArray(rawResponse);
 
     if (parts && parts.length >= 2 && parts.length <= 4) {

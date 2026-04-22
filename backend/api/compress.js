@@ -1,15 +1,15 @@
 /**
  * TokenSaver Backend — POST /api/compress
  *
- * Receives a user prompt, sends it to Claude for compression,
+ * Receives a user prompt, sends it to Google Gemini for compression,
  * and returns the compressed version with token counts.
  *
  * Environment Variables:
- *   ANTHROPIC_API_KEY — Your Anthropic API key
- *   ALLOWED_ORIGIN   — chrome-extension://YOUR_EXTENSION_ID
+ *   GEMINI_API_KEY  — Your Google Gemini API key
+ *   ALLOWED_ORIGIN  — chrome-extension://YOUR_EXTENSION_ID
  */
 
-const Anthropic = require("@anthropic-ai/sdk");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 /** System prompt for the compression engine */
 const SYSTEM_PROMPT = `You are a prompt compression engine. Your only job is to make the user's message shorter while keeping 100% of the meaning and intent. Remove filler words, pleasantries, redundancy. Never remove technical details, specific requirements, or constraints. Return ONLY the compressed prompt, nothing else. No explanation. No preamble.`;
@@ -68,24 +68,15 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const client = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction: SYSTEM_PROMPT,
     });
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1024,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
-
-    const compressed =
-      message.content[0]?.text?.trim() || prompt;
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const compressed = response.text().trim() || prompt;
 
     const originalTokens = estimateTokens(prompt);
     const compressedTokens = estimateTokens(compressed);

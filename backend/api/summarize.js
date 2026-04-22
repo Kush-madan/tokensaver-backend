@@ -5,11 +5,11 @@
  * a dense summary paragraph for context preservation.
  *
  * Environment Variables:
- *   ANTHROPIC_API_KEY — Your Anthropic API key
- *   ALLOWED_ORIGIN   — chrome-extension://YOUR_EXTENSION_ID
+ *   GEMINI_API_KEY  — Your Google Gemini API key
+ *   ALLOWED_ORIGIN  — chrome-extension://YOUR_EXTENSION_ID
  */
 
-const Anthropic = require("@anthropic-ai/sdk");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 /** System prompt for the summarizer */
 const SYSTEM_PROMPT = `You are a conversation summarizer. Given a list of messages from a conversation, write a single dense paragraph that captures: the main topic, key decisions made, important information shared, and where the conversation currently stands. This summary will be used to preserve context. Be factual, dense, no filler. Return ONLY the summary paragraph.`;
@@ -61,25 +61,19 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const client = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction: SYSTEM_PROMPT,
     });
 
     const formattedConversation = formatMessages(messages);
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1024,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: "user",
-          content: `Please summarize this conversation:\n\n${formattedConversation}`,
-        },
-      ],
-    });
-
-    const summary = message.content[0]?.text?.trim() || "";
+    const result = await model.generateContent(
+      `Please summarize this conversation:\n\n${formattedConversation}`
+    );
+    const response = result.response;
+    const summary = response.text().trim() || "";
 
     console.log(
       `[TokenSaver /api/summarize] Summarized ${messages.length} messages → ${summary.length} chars`
