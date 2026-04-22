@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "TokenSaver",
+  "description": "Get more from AI — auto-compress prompts, continue cut-off responses, and never lose context again.",
+  "version": "1.0.0",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://claude.ai/*",
+    "https://chatgpt.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://claude.ai/*"],
+      "js": [
+        "utils/tokenCounter.js",
+        "utils/compressor.js",
+        "utils/memory.js",
+        "utils/splitter.js",
+        "content/shared.js",
+        "content/claude.js"
+      ],
+      "css": ["styles/injected.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://chatgpt.com/*"],
+      "js": [
+        "utils/tokenCounter.js",
+        "utils/compressor.js",
+        "utils/memory.js",
+        "utils/splitter.js",
+        "content/shared.js",
+        "content/chatgpt.js"
+      ],
+      "css": ["styles/injected.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

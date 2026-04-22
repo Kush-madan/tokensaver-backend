@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TokenSaver</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="popup-header">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="8" fill="url(#logo-gradient)"/>
+            <path d="M8 14L12 10L16 14L20 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 18L12 14L16 18L20 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+            <defs>
+              <linearGradient id="logo-gradient" x1="0" y1="0" x2="28" y2="28">
+                <stop stop-color="#818cf8"/>
+                <stop offset="1" stop-color="#6366f1"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>TokenSaver</h1>
+          <span class="subtitle">AI Context Optimizer</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="status-bar">
+      <div class="status-dot" id="status-dot"></div>
+      <span class="status-text" id="status-text">Detecting platform...</span>
+    </div>
+
+    <!-- Feature Toggles -->
+    <section class="toggles-section">
+      <div class="toggle-card" id="toggle-compressor">
+        <div class="toggle-info">
+          <div class="toggle-icon">⚡</div>
+          <div class="toggle-details">
+            <span class="toggle-name">Prompt Compressor</span>
+            <span class="toggle-desc">Shorten prompts before sending</span>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="input-compressor" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-card" id="toggle-continueButton">
+        <div class="toggle-info">
+          <div class="toggle-icon">▶</div>
+          <div class="toggle-details">
+            <span class="toggle-name">Continue Button</span>
+            <span class="toggle-desc">Auto-continue cut-off responses</span>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="input-continueButton" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-card" id="toggle-memoryTrimmer">
+        <div class="toggle-info">
+          <div class="toggle-icon">🧠</div>
+          <div class="toggle-details">
+            <span class="toggle-name">Memory Trimmer</span>
+            <span class="toggle-desc">Summarize old context automatically</span>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="input-memoryTrimmer" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-card" id="toggle-taskSplitter">
+        <div class="toggle-info">
+          <div class="toggle-icon">📋</div>
+          <div class="toggle-details">
+            <span class="toggle-name">Task Splitter</span>
+            <span class="toggle-desc">Split large requests into parts</span>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="input-taskSplitter" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Context Health -->
+    <section class="context-section" id="context-section">
+      <div class="section-header">
+        <span class="section-title">Context Health</span>
+        <span class="context-percent" id="context-percent">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="context-fill" style="width: 0%"></div>
+      </div>
+      <span class="context-label" id="context-label">Context Window: 0% used</span>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats-section">
+      <div class="section-header">
+        <span class="section-title">Today's Stats</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-value" id="stat-compressions">0</span>
+          <span class="stat-label">Compressions</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-tokens-saved">~0</span>
+          <span class="stat-label">Tokens Saved</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-continuations">0</span>
+          <span class="stat-label">Continuations</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="popup-footer">
+      <div class="footer-left">
+        <span class="pro-badge">Free Plan</span>
+      </div>
+      <div class="footer-right">
+        <button class="footer-btn" id="btn-settings" title="Settings">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 10a2 2 0 100-4 2 2 0 000 4z"/>
+            <path fill-rule="evenodd" d="M6.343 1.172a1.5 1.5 0 013.314 0l.07.392a.75.75 0 001.05.46l.357-.17a1.5 1.5 0 011.657 2.494l-.287.222a.75.75 0 000 1.26l.287.222a1.5 1.5 0 01-1.657 2.494l-.357-.17a.75.75 0 00-1.05.46l-.07.392a1.5 1.5 0 01-3.314 0l-.07-.392a.75.75 0 00-1.05-.46l-.357.17a1.5 1.5 0 01-1.657-2.494l.287-.222a.75.75 0 000-1.26l-.287-.222A1.5 1.5 0 014.866 1.854l.357.17a.75.75 0 001.05-.46l.07-.392z"/>
+          </svg>
+        </button>
+        <span class="version">v1.0.0</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
