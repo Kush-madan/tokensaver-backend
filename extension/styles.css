@@ -1,0 +1,232 @@
+:root {
+  --ts-bg: #10151d;
+  --ts-card: #151c26;
+  --ts-card-border: #253247;
+  --ts-text: #e9efff;
+  --ts-muted: #9fb0cc;
+  --ts-accent: #2dd4bf;
+  --ts-accent-strong: #14b8a6;
+  --ts-warn: #f59e0b;
+  --ts-danger: #ef4444;
+  --ts-good: #22c55e;
+}
+
+.ts-popup-body {
+  width: 320px;
+  margin: 0;
+  padding: 12px;
+  background: radial-gradient(circle at top left, #1a2433 0%, var(--ts-bg) 60%);
+  color: var(--ts-text);
+  font-family: "Segoe UI", "Inter", "Helvetica Neue", sans-serif;
+}
+
+.ts-popup-card {
+  background: linear-gradient(180deg, #1a2230, var(--ts-card));
+  border: 1px solid var(--ts-card-border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+}
+
+.ts-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ts-popup-header h1 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+}
+
+.ts-plan-pill {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--ts-card-border);
+  color: var(--ts-muted);
+}
+
+.ts-usage-section {
+  margin-bottom: 14px;
+}
+
+.ts-usage-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  color: var(--ts-muted);
+  font-size: 13px;
+}
+
+.ts-usage-row strong {
+  color: var(--ts-text);
+  font-size: 14px;
+}
+
+.ts-progress-wrap {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #0f141c;
+  border: 1px solid #223044;
+}
+
+.ts-progress-bar {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--ts-accent), var(--ts-accent-strong));
+  transition: width 240ms ease;
+}
+
+.ts-progress-bar[data-state="warn"] {
+  background: linear-gradient(90deg, #fbbf24, var(--ts-warn));
+}
+
+.ts-progress-bar[data-state="danger"] {
+  background: linear-gradient(90deg, #fb7185, var(--ts-danger));
+}
+
+.ts-subscription-section {
+  border-top: 1px solid var(--ts-card-border);
+  padding-top: 10px;
+}
+
+.ts-subtitle {
+  margin: 0;
+  color: var(--ts-muted);
+  font-size: 12px;
+}
+
+.ts-account-section {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ts-card-border);
+}
+
+.ts-account-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ts-ghost-btn {
+  border: 1px solid var(--ts-card-border);
+  color: var(--ts-text);
+  background: transparent;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  display: none;
+}
+
+.ts-copy {
+  margin: 6px 0 10px;
+  font-size: 13px;
+  color: var(--ts-text);
+}
+
+.ts-upgrade-btn {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #062a24;
+  background: linear-gradient(90deg, #5eead4, var(--ts-accent));
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.ts-upgrade-btn:hover {
+  filter: brightness(1.05);
+}
+
+.ts-footer-note {
+  margin: 12px 0 0;
+  color: var(--ts-muted);
+  font-size: 12px;
+}
+
+.ts-status-indicator {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 2147483647;
+  background: rgba(8, 15, 24, 0.9);
+  color: #e7f0ff;
+  border: 1px solid #2a3d57;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1;
+  padding: 10px 12px;
+  backdrop-filter: blur(8px);
+}
+
+.ts-status-indicator[data-mode="success"] {
+  border-color: rgba(34, 197, 94, 0.7);
+}
+
+.ts-status-indicator[data-mode="error"] {
+  border-color: rgba(239, 68, 68, 0.8);
+}
+
+.ts-health-indicator {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 2147483647;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(8, 15, 24, 0.9);
+  border: 1px solid #2a3d57;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: #e7f0ff;
+  font-size: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.ts-health-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--ts-good);
+}
+
+.ts-health-dot[data-state="warn"] {
+  background: var(--ts-warn);
+}
+
+.ts-health-dot[data-state="danger"] {
+  background: var(--ts-danger);
+}
+
+.ts-pulse .ts-health-dot[data-state="danger"] {
+  animation: ts-pulse 1s infinite;
+}
+
+@keyframes ts-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+@media (max-width: 480px) {
+  .ts-health-indicator,
+  .ts-status-indicator {
+    transform: scale(0.95);
+    transform-origin: bottom right;
+  }
+}

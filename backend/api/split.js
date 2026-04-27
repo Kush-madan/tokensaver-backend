@@ -9,7 +9,8 @@
  *   ALLOWED_ORIGIN  — chrome-extension://YOUR_EXTENSION_ID
  */
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenAI } = require("@google/genai");
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 
 /** System prompt for the task splitter */
 const SYSTEM_PROMPT = `You are a task splitter. The user has a large request that needs to be broken into smaller logical parts for an AI to handle one at a time. Split it into 2-4 parts where each part can stand alone but references the previous parts. Number each part clearly. Return a JSON array of strings, each string being one part of the task. Return ONLY the JSON array, no other text.`;
@@ -94,17 +95,16 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: SYSTEM_PROMPT,
-    });
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: "Missing GEMINI_API_KEY" });
+    }
 
-    const result = await model.generateContent(
-      `Split this large task into 2-4 logical parts:\n\n${prompt}`
-    );
-    const response = result.response;
-    const rawResponse = response.text().trim() || "";
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const response = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: `${SYSTEM_PROMPT}\n\nSplit this large task into 2-4 logical parts:\n\n${prompt}`,
+    });
+    const rawResponse = (response.text || "").trim() || "";
     const parts = parseJsonArray(rawResponse);
 
     if (parts && parts.length >= 2 && parts.length <= 4) {
@@ -142,6 +142,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       parts: [prompt],
       error: "Splitting failed, returning original as single part",
+      details: error.message,
     });
   }
 };

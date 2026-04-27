@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TokenSaver</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="ts-popup-body">
+    <main class="ts-popup-card">
+      <header class="ts-popup-header">
+        <h1>TokenSaver</h1>
+        <span class="ts-plan-pill" id="planPill">Free</span>
+      </header>
+
+      <section class="ts-account-section">
+        <p class="ts-subtitle">Account</p>
+        <p class="ts-copy" id="accountText">Not signed in (anonymous mode)</p>
+        <div class="ts-account-actions">
+          <button id="loginBtn" class="ts-upgrade-btn" type="button">Sign in with Google</button>
+          <button id="logoutBtn" class="ts-ghost-btn" type="button">Log out</button>
+        </div>
+      </section>
+
+      <section class="ts-usage-section">
+        <div class="ts-usage-row">
+          <span>Used today</span>
+          <strong id="usedCount">0</strong>
+        </div>
+        <div class="ts-usage-row">
+          <span>Remaining</span>
+          <strong id="remainingCount">20</strong>
+        </div>
+
+        <div class="ts-progress-wrap" aria-label="Daily usage progress">
+          <div class="ts-progress-bar" id="progressBar"></div>
+        </div>
+      </section>
+
+      <section class="ts-subscription-section">
+        <p class="ts-subtitle">Plan</p>
+        <p class="ts-copy" id="subscriptionText">Free tier: 20 compressions/day</p>
+        <a id="upgradeLink" class="ts-upgrade-btn" href="#" role="button">Open Dashboard</a>
+      </section>
+
+      <p class="ts-footer-note" id="statusNote">Optimized for Claude and ChatGPT.</p>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+{
+  "node": {
+    "00e898ee6b095f70d5ca355ef821396eb9076eb935": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 5238,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_0",
+          "filename": "tokensaver-vercel/app/admin/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_0",
+      "filename": "tokensaver-vercel/app/admin/page.tsx"
+    },
+    "40960819945d7af124fb456d09e1ed3038026c98f9": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 5238,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_2",
+          "filename": "tokensaver-vercel/app/admin/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_2",
+      "filename": "tokensaver-vercel/app/admin/page.tsx"
+    },
+    "40c3ace0162c29731cf776ec8c370b4259d744b54c": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 5238,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_1",
+          "filename": "tokensaver-vercel/app/admin/page.tsx"
+        }
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_1",
+      "filename": "tokensaver-vercel/app/admin/page.tsx"
+    }
+  },
+  "edge": {}
+}

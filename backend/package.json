@@ -5,10 +5,14 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "deploy": "vercel --prod"
+    "deploy": "vercel --prod",
+    "start": "node server.js"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0"
+    "@google/genai": "^1.50.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
   },
   "engines": {
     "node": ">=18.0.0"

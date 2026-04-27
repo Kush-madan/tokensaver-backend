@@ -9,7 +9,8 @@
  *   ALLOWED_ORIGIN  — chrome-extension://YOUR_EXTENSION_ID
  */
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenAI } = require("@google/genai");
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 
 /** System prompt for the summarizer */
 const SYSTEM_PROMPT = `You are a conversation summarizer. Given a list of messages from a conversation, write a single dense paragraph that captures: the main topic, key decisions made, important information shared, and where the conversation currently stands. This summary will be used to preserve context. Be factual, dense, no filler. Return ONLY the summary paragraph.`;
@@ -61,19 +62,19 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: SYSTEM_PROMPT,
-    });
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: "Missing GEMINI_API_KEY" });
+    }
+
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const formattedConversation = formatMessages(messages);
 
-    const result = await model.generateContent(
-      `Please summarize this conversation:\n\n${formattedConversation}`
-    );
-    const response = result.response;
-    const summary = response.text().trim() || "";
+    const response = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: `${SYSTEM_PROMPT}\n\nPlease summarize this conversation:\n\n${formattedConversation}`,
+    });
+    const summary = (response.text || "").trim() || "";
 
     console.log(
       `[TokenSaver /api/summarize] Summarized ${messages.length} messages → ${summary.length} chars`
@@ -92,6 +93,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       summary: fallback.substring(0, 500),
       error: "AI summarization failed, returning basic summary",
+      details: error.message,
     });
   }
 };

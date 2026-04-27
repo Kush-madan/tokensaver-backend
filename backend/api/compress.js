@@ -9,7 +9,8 @@
  *   ALLOWED_ORIGIN  — chrome-extension://YOUR_EXTENSION_ID
  */
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenAI } = require("@google/genai");
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 
 /** System prompt for the compression engine */
 const SYSTEM_PROMPT = `You are a prompt compression engine. Your only job is to make the user's message shorter while keeping 100% of the meaning and intent. Remove filler words, pleasantries, redundancy. Never remove technical details, specific requirements, or constraints. Return ONLY the compressed prompt, nothing else. No explanation. No preamble.`;
@@ -68,15 +69,16 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: SYSTEM_PROMPT,
-    });
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: "Missing GEMINI_API_KEY" });
+    }
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const compressed = response.text().trim() || prompt;
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const response = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: `${SYSTEM_PROMPT}\n\nUser prompt:\n${prompt}`,
+    });
+    const compressed = (response.text || "").trim() || prompt;
 
     const originalTokens = estimateTokens(prompt);
     const compressedTokens = estimateTokens(compressed);
@@ -99,6 +101,7 @@ module.exports = async function handler(req, res) {
       originalTokens: estimateTokens(prompt),
       compressedTokens: estimateTokens(prompt),
       error: "Compression failed, returning original",
+      details: error.message,
     });
   }
 };

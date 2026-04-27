@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "TokenSaver",
+  "version": "1.0.0",
+  "description": "Auto-compress prompts on Claude and ChatGPT to avoid token limits.",
+  "permissions": ["storage", "activeTab", "identity"],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://claude.ai/*",
+    "https://*.vercel.app/*",
+    "https://*.supabase.co/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "TokenSaver",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*", "https://claude.ai/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
